@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Attendee Checkout</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <style>
+        body {
+        margin: 3em;
+        background-color: black;
+        text-align: center;
+<<<<<<< HEAD
+        }  
+
+=======
+        }
+>>>>>>> master
+        button {
+        cursor: pointer;
+        }
+        .unit-price {
+        margin-right: 2rem;
+        color: #999;
+        }
+    </style>
+</head>
+<body>
+    <H1>Attendee Ticket Check</H1>
+<div class="container" id="app">
+        <form method="POST">
+            <!-- A placeholder / attendee inputs -->
+            <div class="attendee-list"></div>
+            <div class="row justify-content-center">
+                <div class="col-sm-6"></div>
+                <div class="col-sm-2">
+                    <button type="button" class="btn btn-secondary add-attendee">Add Attendee</button>
+                </div>
+            </div>
+            <hr>
+            <div class="row justify-content-center">
+                <div class="col-sm-6">
+                    <!-- A placeholder / unit price -->
+                    <span id="unit-price" class="unit-price"></span>
+                </div>
+                <div class="col-sm-2 text-left">
+                    <button type="submit" id="checkout-button" class="btn btn-primary">
+                        Pay
+                        <!-- A placeholder / checkout total -->
+                        <span class="amount"></span></button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <script type="text/template" data-template="attendee">
+        <div class="attendee row justify-content-center">
+            <div class="col-sm-3">
+                <div class="form-group">
+                <label class="sr-only">Name</label>
+                <input 
+                    class="form-control"
+                    placeholder="Enter name"
+                    name="attendee[][name]"
+                    required>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                <label class="sr-only">Email address</label>
+                <input
+                    type="email"
+                    class="form-control"
+                    placeholder="Enter email"
+                    name="attendee[][email]"
+                    required>
+                </div>
+            </div>
+            <div class="col-sm-2 text-left">
+                <button type="button" class="btn btn-light remove-attendee">
+                    <span aria-hidden="true">&times;</span> Remove
+                </button>
+            </div>
+        </div>
+    </script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+<script>
+$(document).ready(function () {
+    var data = {
+        cost: 9.99
+    };
+    /**
+     * Get the count of attendees
+     */
+    function getAttendeeCount() {
+        return $('.attendee-list .row.attendee').length;
+    }
+    function addAttendee() {
+        $('.attendee-list').append(
+            $('script[data-template="attendee"]').text()
+        );
+        syncRemoveButtons();
+    }
+    function syncRemoveButtons() {
+        // Hide the first remove button, if only one attendee. 
+        // Any other amount, show all of the remove buttons
+        if (getAttendeeCount() === 1) {
+            $('.attendee-list .attendee .remove-attendee').first().hide();
+        } else {
+            $('.attendee-list .attendee .remove-attendee').show();
+        }
+    }
+    function syncPurchaseButton() {
+        // Total up the checout 
+        $('#checkout-button span.amount').html(
+            '$' + data.cost * getAttendeeCount()
+        );
+    }
+    // Events
+    $('.add-attendee').on('click', function (event) {
+        event.preventDefault();
+        addAttendee();
+        $(this).trigger('attendee:add');
+    }).on('attendee:add', function () {
+        syncPurchaseButton();
+        syncRemoveButtons();
+    });
+    // Attach an event handler to the remove button
+    $('#app').on('click', '.attendee .remove-attendee', function (event) {
+        event.preventDefault();
+        var $row = $(event.target).closest('.attendee.row');
+        
+        $row.remove();
+        $('#app').trigger('attendee:remove');
+    });
+
+    $('#app').on('attendee:remove', function () {
+        syncPurchaseButton();
+        syncRemoveButtons();
+    });
+    // Init the form
+    // Set up the unit cost for each ticket
+    $('#unit-price').html('$' + data.cost + ' ea.');
+    // Add one attendee by default on init
+    addAttendee();
+    syncPurchaseButton();
+});
+</script>
+</body>
+</html>
